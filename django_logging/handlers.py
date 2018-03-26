@@ -6,8 +6,6 @@ from logging import StreamHandler
 from logging.handlers import RotatingFileHandler
 from . import settings
 from .log_object import LogObject, ErrorLogObject, SqlLogObject
-from elasticsearch import Elasticsearch
-from elasticsearch.exceptions import ConnectionError
 
 
 def message_from_record(record):
@@ -23,22 +21,6 @@ def message_from_record(record):
     return message
 
 
-def send_to_elasticsearch(index, timestamp, level, message):
-    if settings.ELASTICSEARCH_ENABLED:
-        connection = Elasticsearch(hosts=settings.ELASTICSEARCH_HOSTS)
-        try:
-            connection.index(
-                index="{}-{}".format(index, time.strftime('%Y.%m.%d')),
-                doc_type="log_object",
-                body={
-                    "date": datetime.datetime.fromtimestamp(timestamp).isoformat(),
-                    "level": level,
-                    "message": message
-                })
-        except ConnectionError:
-            pass
-
-
 class AppFileHandler(RotatingFileHandler):
     def emit(self, record):
         if not isinstance(record.msg, LogObject)\
@@ -52,7 +34,6 @@ class AppFileHandler(RotatingFileHandler):
     def format(self, record):
         created = int(record.created)
         message = message_from_record(record)
-        send_to_elasticsearch("django-logging-app", created, record.levelname, message)
         return json.dumps({record.levelname: {created: message}}, sort_keys=True)
 
     def rotation_filename(self, default_name):
@@ -78,7 +59,6 @@ class DebugFileHandler(RotatingFileHandler):
     def format(self, record):
         created = int(record.created)
         message = message_from_record(record)
-        send_to_elasticsearch("django-logging-app", created, record.levelname, message)
         return json.dumps({record.levelname: {created: message}}, sort_keys=True)
 
     def rotation_filename(self, default_name):
@@ -127,7 +107,6 @@ class SQLFileHandler(RotatingFileHandler):
     def format(self, record):
         created = int(record.created)
         message = {record.levelname: {created: record.msg.to_dict}}
-        send_to_elasticsearch("django-logging-sql", created, record.levelname, message)
         return json.dumps(message, sort_keys=True)
 
     def rotation_filename(self, default_name):
@@ -139,4 +118,3 @@ class SQLFileHandler(RotatingFileHandler):
                 fh_out.writelines(fh_in)
             fh_in.seek(0)
             fh_in.truncate()
-
