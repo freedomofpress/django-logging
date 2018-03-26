@@ -72,7 +72,7 @@ LOGGING = {
         'dl_logger': {
             'handlers': LOG_HANDLERS,
             'level': LOG_LEVEL,
-            'propagate': True
+            'propagate': settings.PROPOGATE
         },
     }
 }

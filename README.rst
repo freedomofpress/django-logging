@@ -171,6 +171,7 @@ Default Settings
 
 :python:`INDENT_CONSOLE_LOG = 2` - Indent console log by "n" spaces.
 
+:python:`PROPOGATION = True` - set this to False to disable propogation of the 'dl_logger' logger
 
 Change Log
 ==========
