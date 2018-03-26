@@ -22,8 +22,6 @@ class DjangoLoggingSettings(object):
             ROTATE_MB=100,
             ROTATE_COUNT=10,
             INDENT_CONSOLE_LOG=2,
-            ELASTICSEARCH_ENABLED=False,
-            ELASTICSEARCH_HOSTS=["localhost"]
         )
 
         try:
