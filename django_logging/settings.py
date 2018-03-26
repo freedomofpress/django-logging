@@ -22,6 +22,7 @@ class DjangoLoggingSettings(object):
             ROTATE_MB=100,
             ROTATE_COUNT=10,
             INDENT_CONSOLE_LOG=2,
+            PROPOGATE=True
         )
 
         try:
