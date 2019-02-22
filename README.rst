@@ -169,8 +169,6 @@ Default Settings
 
 :python:`ROTATE_COUNT = 10` - Maximum number of rotated log files.
 
-:python:`INDENT_CONSOLE_LOG = 2` - Indent console log by "n" spaces.
-
 :python:`PROPOGATION = True` - set this to False to disable propogation of the 'dl_logger' logger
 
 Change Log
