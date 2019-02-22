@@ -81,19 +81,14 @@ class ConsoleHandler(StreamHandler):
             created = int(record.created)
             message = {record.levelname: {created: record.msg.to_dict}}
 
-            try:
-                indent = int(settings.INDENT_CONSOLE_LOG)
-            except (ValueError, TypeError):
-                indent = None
             return json.dumps(message,
-                              sort_keys=True,
-                              indent=indent)
+                              sort_keys=True)
         elif isinstance(record.msg, ErrorLogObject):
             return str(record.msg)
         elif isinstance(record.msg, dict):
             created = int(record.created)
             message = {record.levelname: {created: record.msg}}
-            return json.dumps(message, sort_keys=True, indent=2)
+            return json.dumps(message, sort_keys=True)
         else:
             return super(ConsoleHandler, self).format(record)
 
