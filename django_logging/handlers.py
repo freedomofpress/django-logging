@@ -82,14 +82,13 @@ class ConsoleHandler(StreamHandler):
         return super(ConsoleHandler, self).emit(record)
 
     def format(self, record):
-        created = int(record.created)
-        if isinstance(record.msg, dict):
-            message = {record.levelname: {created: record.msg}}
-        else:
-            message = {record.levelname: {created: record.msg.to_dict}}
+        message = {'levelname': record.levelname, 'created': int(record.created)}
+        try:
+            message.update(record.msg)
+        except TypeError:
+            message.update(record.msg.to_dict)
 
         return json.dumps(message, sort_keys=True)
-
 
 class SQLFileHandler(RotatingFileHandler):
     def emit(self, record):
