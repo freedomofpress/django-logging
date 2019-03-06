@@ -74,29 +74,21 @@ class DebugFileHandler(RotatingFileHandler):
 
 class ConsoleHandler(StreamHandler):
     def emit(self, record):
+        if not isinstance(record.msg, LogObject)\
+                and not isinstance(record.msg, ErrorLogObject)\
+                and not isinstance(record.msg, dict)\
+                and not isinstance(record.msg, Exception):
+            return
         return super(ConsoleHandler, self).emit(record)
 
     def format(self, record):
-        if isinstance(record.msg, LogObject) or isinstance(record.msg, SqlLogObject):
-            created = int(record.created)
-            message = {record.levelname: {created: record.msg.to_dict}}
+        message = {'levelname': record.levelname, 'created': int(record.created)}
+        try:
+            message.update(record.msg)
+        except TypeError:
+            message.update(record.msg.to_dict)
 
-            try:
-                indent = int(settings.INDENT_CONSOLE_LOG)
-            except (ValueError, TypeError):
-                indent = None
-            return json.dumps(message,
-                              sort_keys=True,
-                              indent=indent)
-        elif isinstance(record.msg, ErrorLogObject):
-            return str(record.msg)
-        elif isinstance(record.msg, dict):
-            created = int(record.created)
-            message = {record.levelname: {created: record.msg}}
-            return json.dumps(message, sort_keys=True, indent=2)
-        else:
-            return super(ConsoleHandler, self).format(record)
-
+        return json.dumps(message, sort_keys=True)
 
 class SQLFileHandler(RotatingFileHandler):
     def emit(self, record):
