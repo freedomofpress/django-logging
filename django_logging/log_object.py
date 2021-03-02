@@ -113,26 +113,19 @@ class ErrorLogObject(BaseLogObject):
         )
 
     @classmethod
-    def format_traceback(cls, tb):
-        tb = traceback.extract_tb(tb)
-        for i in tb:
-            yield {'file': i[0], 'line': i[1], 'method': i[2]}
+    def format_stackframe(cls, frame):
+        filename, line, method, _ = frame
+        return {'file': filename, 'line': line, 'method': method}
 
     @classmethod
     def format_exception(cls, exception):
-        result = dict(
+        stack = traceback.TracebackException.from_exception(exception).stack
+
+        return dict(
             message=str(exception),
             type=cls.exception_type(exception),
-            traceback=list()
+            traceback=[cls.format_stackframe(frame) for frame in stack],
         )
-        if sys.version_info.major >= 3 and sys.version_info.minor >= 5:
-            _traceback = traceback.TracebackException.from_exception(exception).exc_traceback
-        else:
-            _, _, _traceback = traceback.sys.exc_info()
-
-        for line in cls.format_traceback(_traceback):
-            result['traceback'].append(line)
-        return result
 
     @property
     def response(self):
