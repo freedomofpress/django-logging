@@ -48,15 +48,17 @@ class BaseLogObject(object):
 
 
 class LogObject(BaseLogObject):
-    def __init__(self, request, response):
+    def __init__(self, request, response, duration):
         super(LogObject, self).__init__(request)
         self.response = response
+        self.duration = duration
 
     @property
     def to_dict(self):
         result = dict(
             request=self.format_request(),
-            response=self.format_response()
+            response=self.format_response(),
+            duration_ms=self.duration,
         )
         return result
 
