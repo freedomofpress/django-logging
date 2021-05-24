@@ -13,11 +13,10 @@ def message_from_record(record):
         message = record.msg
     elif isinstance(record.msg, Exception):
         message = ErrorLogObject.format_exception(record.msg)
+    elif hasattr(record.msg, 'to_dict'):
+        message = record.msg.to_dict
     else:
-        try:
-            message = record.msg.to_dict
-        except AttributeError:
-            message = record.msg
+        message = record.msg
     return message
 
 
