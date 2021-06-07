@@ -18,7 +18,7 @@ class DjangoLoggingSettings(object):
             RESPONSE_FIELDS=('status', 'reason', 'charset', 'headers', 'content'),
             CONTENT_JSON_ONLY=True,
             CONTENT_TYPES=None,
-            ENCODING='ascii',
+            ENCODING='utf-8',
             ROTATE_MB=100,
             ROTATE_COUNT=10,
             PROPOGATE=True
